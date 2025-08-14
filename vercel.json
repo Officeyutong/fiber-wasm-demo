@@ -19,5 +19,8 @@
             "src": "./dist",
             "use": "@vercel/static"
         }
-    ]
+    ],
+    "github": {
+        "enabled": false
+    }
 }

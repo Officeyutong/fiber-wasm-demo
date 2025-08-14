@@ -50,4 +50,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }} #Optional 
           vercel-args: '--prod' #Optional
           vercel-org-id: ${{ secrets.ORG_ID}}  #Required
-          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required 
+          vercel-project-id: ${{ secrets.PROJECT_ID}} #Required
+          working-directory: "./dist"
