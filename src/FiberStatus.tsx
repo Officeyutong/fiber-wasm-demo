@@ -4,7 +4,7 @@ import { Button, Header, Segment, Table } from "semantic-ui-react";
 import ViewDetailModal from "./ViewDetailModal";
 import hljs from "highlight.js";
 
-const FiberStatus: React.FC<{ fiber: Fiber; setLoading: (f: boolean) => void; }> = ({ fiber, setLoading }) => {
+const FiberStatus: React.FC<{ fiber: Fiber; setLoading: (f: boolean) => void; address: string; }> = ({ fiber, setLoading, address }) => {
 
     const [peers, setPeers] = useState<ListPeerResult>();
     const [channelsOfPeers, setChannelsOfPeers] = useState<Map<string, ListChannelsResult> | null>(null);
@@ -68,6 +68,8 @@ const FiberStatus: React.FC<{ fiber: Fiber; setLoading: (f: boolean) => void; }>
             Status
         </Header>
         <Segment stacked>
+            <Header as="h3">CKB Address of this node</Header>
+            {address}
             <Header as="h3">Connected peers</Header>
             <Table>
                 <Table.Header>
@@ -173,7 +175,7 @@ const FiberStatus: React.FC<{ fiber: Fiber; setLoading: (f: boolean) => void; }>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {graphChannels.channels.map((item,idx) => <Table.Row key={idx}>
+                            {graphChannels.channels.map((item, idx) => <Table.Row key={idx}>
                                 <Table.Cell>{item.node1}</Table.Cell>
                                 <Table.Cell>{item.node2}</Table.Cell>
                                 <Table.Cell>{item.capacity}</Table.Cell>

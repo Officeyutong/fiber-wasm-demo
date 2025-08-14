@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Fiber, randomSecretKey } from "@nervosnetwork/fiber-js";
 import { Container, Dimmer, Form, Header, Loader, Segment, Tab, TabPane, TextArea } from 'semantic-ui-react';
 import DefaultConfig from "./default_config.txt";
@@ -8,6 +8,8 @@ import CreateInvoiceField from './CreateInvoiceField';
 import SendPaymentWithInvoiceField from './SendPaymentWithInvoiceField';
 import { hexStringToUint8Array, uint8ArrayToHexString, useInputValue } from './main';
 import SendPaymentField from './SendPaymentField';
+import { bytesFrom, ccc, hashCkb, hexFrom } from '@ckb-ccc/core';
+import { secp256k1 } from '@noble/curves/secp256k1';
 enum AppState {
     BeforeInit,
     FiberStarted
@@ -35,6 +37,23 @@ const App: React.FC<{}> = () => {
     const ckbSecretKey = useInputValue(uint8ArrayToHexString(randomSecretKey()));
     const fiberKeypair = useInputValue(uint8ArrayToHexString(randomSecretKey()));
     const databasePrefix = useInputValue("");
+
+    const ckbAddress = useMemo(() => {
+        try {
+            const publicKey = hexFrom(secp256k1.getPublicKey(bytesFrom(hexFrom(ckbSecretKey.value)), true));
+            const signerScript = ccc.Script.from({
+                codeHash: "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+
+                hashType: "type",
+                args: bytesFrom(hashCkb(publicKey)).slice(0, 20)
+            })
+            const address = ccc.Address.from({ prefix: "ckt", script: signerScript });
+            return address.toString();
+        } catch {
+            return null;
+        }
+    }, [ckbSecretKey]);
+
     useEffect(() => {
         if (!configLoaded) {
             (async () => {
@@ -116,6 +135,10 @@ const App: React.FC<{}> = () => {
                         <label>CKB secret key</label>
                         <Form.Input {...ckbSecretKey}></Form.Input>
                     </Form.Field>
+                    {ckbAddress !== null && <Form.Field>
+                        <label>CKB Address</label>
+                        {ckbAddress}
+                    </Form.Field>}
                     <Form.Field>
                         <label>Database prefix</label>
                         <Form.Input {...databasePrefix}></Form.Input>
@@ -147,7 +170,7 @@ const App: React.FC<{}> = () => {
                 },
 
             ]}></Tab>
-            <FiberStatus fiber={appState.fiber} setLoading={setLoading}></FiberStatus>
+            <FiberStatus address={ckbAddress || ""} fiber={appState.fiber} setLoading={setLoading}></FiberStatus>
         </>}
     </Container>
 }
