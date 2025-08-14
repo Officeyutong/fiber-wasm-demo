@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: actions-use/setup-rust@stable
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Setup dependencies
+        run: |
+          cargo install wasm-pack
+          rustup target add wasm32-unknown-unknown
+      
+      - name: Build fiber wasm
+        run: |
+          cd ..
+          git clone https://github.com/nervosnetwork/fiber
+          cd fiber
+          npm install
+          npm build -ws
+      
+      - name: Build fiber wasm demo
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
+          clean: true
