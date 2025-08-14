@@ -31,7 +31,7 @@ jobs:
           git clone https://github.com/nervosnetwork/fiber
           cd fiber
           npm install
-          npm build -ws
+          npm run build -ws
       
       - name: Build fiber wasm demo
         run: |
