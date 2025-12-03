@@ -14,7 +14,8 @@ const SendPaymentField: React.FC<{ fiber: Fiber; setLoading: (f: boolean) => voi
             setResult(await fiber.sendPayment({
                 target_pubkey: targetPubkey.value,
                 amount: amount.value as HexString,
-                payment_hash: paymentHash.value as HexString
+                payment_hash: paymentHash.value as HexString,
+                keysend: true
             }));
         } catch (e) { alert(e) } finally { setLoading(false); }
     }
