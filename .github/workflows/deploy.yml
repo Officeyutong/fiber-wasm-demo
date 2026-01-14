@@ -20,18 +20,18 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
-      - name: Setup dependencies
-        run: |
-          cargo install wasm-pack
-          rustup target add wasm32-unknown-unknown
+      # - name: Setup dependencies
+      #   run: |
+      #     cargo install wasm-pack
+      #     rustup target add wasm32-unknown-unknown
       
-      - name: Build fiber wasm
-        run: |
-          cd ..
-          git clone https://github.com/nervosnetwork/fiber
-          cd fiber
-          npm install
-          npm run build -ws
+      # - name: Build fiber wasm
+      #   run: |
+      #     cd ..
+      #     git clone https://github.com/nervosnetwork/fiber
+      #     cd fiber
+      #     npm install
+      #     npm run build -ws
       
       - name: Build fiber wasm demo
         run: |
